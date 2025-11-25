@@ -33,3 +33,35 @@ test.describe ('CRM Customer Page - Possitive case', ()=>{
         await loginAndNavigateToNewCustomer (page, 'Subscriptions');
     });
 });
+
+// function createRandomUser() {
+
+//   return {
+
+//     phone: faker.string.uuid(),
+
+//     vatNumber: faker.internet.username(),
+
+//     website: faker.internet.web(),
+
+//     currency: 'USD',
+
+//     language: 'Vietnamese',
+
+//     address: faker.date.birthdate(),
+
+//     city: faker.date.past(),
+
+//     state: 
+
+//     zipcode:
+
+//     country: 'Vietnam'
+
+//   };
+
+// }
+
+
+
+
