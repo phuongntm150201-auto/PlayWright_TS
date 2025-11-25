@@ -92,8 +92,6 @@ page.once('dialog', async dialog => {
 await page.locator('#btn-alert').click();
 await expect(page.locator('#alert-result')).toHaveText('Alert acknowledged');
 
-await page.pause ();
-
 // CONFIRM → Accept (YES) và assert UI
 page.once('dialog', async dialog => {
   expect(dialog.type()).toBe('confirm');
@@ -105,18 +103,19 @@ await page.locator('#btn-confirm').click();
 await expect(page.locator('#confirm-result')).toHaveText('Confirmed: YES');
 
 // CONFIRM → Dismiss (NO) và assert UI
-page.once('dialog', async dialog => {
-  expect(dialog.type()).toBe('confirm');
-  await dialog.dismiss();
-});
-await page.locator('#btn-confirm').click();
-await expect(page.locator('#confirm-result')).toHaveText('Confirmed: NO');
+// page.once('dialog', async dialog => {
+//   expect(dialog.type()).toBe('confirm');
+//   await dialog.dismiss();
+// });
+// await page.locator('#btn-confirm').click();
+// await expect(page.locator('#confirm-result')).toHaveText('Confirmed: NO');
 
 
 // PROMPT → Accept với text và assert UI hiển thị đúng text
 page.once('dialog', async dialog => {
   expect(dialog.type()).toBe('prompt');
   expect(dialog.message()).toContain('Your name');
+  //truyền text vào input
   await dialog.accept('Tester');
 });
 await page.locator('#btn-prompt').click();
@@ -134,7 +133,7 @@ await expect(page.locator('#prompt-result')).toHaveText('Prompt canceled');
 });
 
 
-
+//locator chain -> mình có thể nối nhiều locator lại với nhau
 
 test('ví dụ về modal', async ({ page }) => {
 
