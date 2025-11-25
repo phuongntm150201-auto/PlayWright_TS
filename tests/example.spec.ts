@@ -8,7 +8,7 @@ import playwrightConfig from '../playwright.config';
 //1. Khởi tạo : đầu tiên PW sẽ sẽ tạo browserContext ( giống như 1 profile riêng sạch sẽ) => sau đó dẽ mở 1 page () 1 tab mới hoàn toàn trống trong context đó
 //2. Sử dụng : page=> sẽ được truyền vào qua cơ chế destructering =>toàn bộ test case sẽ diễn ra { }
 //3. Sau khi chạy xong => page và browercontext tương ứng sẽ bị huỷ bỏ
-
+//TDD
 //framework => sử dụng bộ khung để có thể sử dụng được
 
 test('has title', async ({ page, context }) => {
@@ -42,6 +42,17 @@ test('has title', async ({ page, context }) => {
   await hrmPage.screenshot ({path: 'screenshots/tab2-hrm.png'})
 
 });
+// pause là 1 trick để mình debug
+//
+
+
+// echo "# PlayWright_TS" >> README.md
+// git init
+// git add README.md
+// git commit -m "first commit"
+// git branch -M main
+// git remote add origin https://github.com/phuongntm150201-auto/PlayWright_TS.git
+// git push -u origin main
 
 // test('get started link', async ({ page }) => {
 //   await page.goto('https://playwright.dev/');
