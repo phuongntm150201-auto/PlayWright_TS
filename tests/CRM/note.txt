@@ -1,0 +1,106 @@
+- Page Object Model (POM)
+- Sẽ đảm bảo việc là tách biệt trách nhiệm
+- phân chia thành 2 thành phần chính
+1. kịch bản test (test script): đại diện cho business logic
+2. đối tượng trang  (page object) : đại diện cho technical implenmentation -> tương tác với UI như thế nào
+-> chia thành các class -> mỗi 1 class đại diện cho 1 trang
+
+--> giải quyết được thách thức lớn nhất trong auto
+1. tính dễ bảo trì
+- nó sẽ tập trung tất cả các selector và phương thức của trang custom bao gồm ví dụ là: company locator
+2. Tính tái sử dụng
+- tạo ra các phuơng thức (actions) đại diện cho hành vi nghiệp vụ (business behavior)
+-> ví dụ có loginPage.login ('user','password')
+3. Tính dễ đọc
+
+Để giải quyết vấn đề DRY (don't repeat yourself) => (trang cơ sở )
+basepage => là 1 lớp cha trừu tượng mà tất cả các page object khác (loginpage), sẽ kế thừa
+=> đóng vai trò như 1 hd giao diện chung. định nghĩa tập hợp các yếu tố và hành động mà mọi trang trong ứng dụng đều phải có quyền truy cập
+
+VD: hệ thống nv và công cụ chung
+-> mọi nv đều cần sử dụng chung 1 số công cụ của cty, VD như email service
+
+
+ngày 16/12/2025
+
+cấu trúc chuẩn của 2 môi trường (dev và stagging)
+.env (1.cấu hình chung- ai cũng giống ai)
+.env.development (2. cấu hình riêng cho DEV)
+.env.development.local (3.bí mật- chỉ có máy bạn có-k up lên git)
+.env.staging (4.cấu hình cho môi trường stagging)
+
+..vị trí ở root (thư mục gốc)ngang hàng vs package.json
+
+
+thứ tự ưu tiên là
+//biến phụ thuộc là NODE_ENV=abc
+.env.[NODE_EVN].local hoặc .env [NODE_ENV]
+
+
+1. .env (độ ưu tiên thấp nhất)
+2. .env.development (tb)
+3. .env.development.local (cao nhất ở môi trường dev)
+4. .env.staging (cao nhất ở môi trường stagging)
+
+//nguyên tắc -> cái load sẽ ghi đè lên load trước
+trên phiếu NODE_ENV ghe development -> thủ thư sẽ tìm tới tất cả môi trường có tên .env.development
+
+trường hợp mà NODE_ENV ghi staging -> thủ thư tìm cả môi trường có tên .env.staging
+
+để lấy thông tin biến nt ta dùng process.env.key mà ta mong muốn
+process.env.BASE_URL ->https://dev.crm.anhtester.com
+
+///
+dotenv flow hay dotenv hoạt động dựa trên process.cwd () (current working directory - thư mục hiện tại đang gõ lệnh)
+
+trên windows ->terminal là powershell
+trên gitbash, mac, linux ->mặc định
+
+WINDOW
+$env:NODE_ENV="staging";  npx playwright test ./tests/env-demo.spec.ts
+
+mac
+NODE_ENV=staging npx playwright test ./tests/env-demo.spec.ts
+
+as (alias)
+//"test:dev": "cross-env NODE_ENV=development npx playwright test",
+
+    "test:uat": "cross-env NODE_ENV=staging npx playwright test"
+
+    -> cross-env NODE_ENV=development npx playwright test ./tests/env-demo.spec.ts
+
+npm run test:dev ./tests/env-demo.spec.ts
+
+
+
+HOOKS (life cycle)
+
+tứ trụ hooks (life cycle)
+
+beforeAll (worker) --> 1 lần duy nhất /file
+
+beforeEach (test) chạy lặp lại mỗi lần trước MỖI lần test
+
+afterEach (test) chạy lặp lại mỗi lần sau Mỗi lần test
+
+afterAll (worker) -> 1 lần duy nhất sau khi chạy hết test
+
+
+WORKER REUSE
+
+4 worker - 100 bài test
+
+1. worker 1 chạy before all (mở page)
+2. worker 1 chạy Test A (login -> chuyển sang dashboard)
+3. worker 1 chưa tắt-> nó nhận tiếp test B
+4. lúc này before all không chạy lại (vì nó là beforeall -> chạy 1 lần cho cả file worker đó)
+5. test B nhận lại các sharedpage cũ từ A (đang ở dashboard)
+6. -> fail
+
+
+FIXTURE
+
+giống beforeEach -> nó tự động taoj page mới cho mỗi bài test (sạch sẽ)
+không cần let hay biến global. Page được truyền thẳng vào hàm test {page}
+tự động dọn dẹp depk * (khi chạy xong fixture tự đóng page), tự giải phóng RAM
+tái sử dụng .viết 1 lần sử dụng cho 1000 test

@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { expect, test, Locator, Page } from '@playwright/test';
 import {stat} from 'node:fs/promises';
 
 test('ví dụ về upload file', async ({ page }) => {
@@ -36,7 +36,6 @@ test('ví dụ về upload file', async ({ page }) => {
   await hidden.setInputFiles ('tests/fixtures/sample1.txt');
   await expect (page.locator ('#hidden-input-upload')).toBeAttached ();
 
-  await page.pause();
 
   //3) Bắt sự kiện filechooser khi bắt buộc phải click nút
 
@@ -56,6 +55,8 @@ await expect(page.locator('text=Số file:').nth (0)).toContainText('2');
 // Xoá
 await multi.setInputFiles([]);
 await expect(page.locator('text=Chưa có file nào').nth (1)).toBeVisible();
+
+await page.pause;
 
 });
 
@@ -117,18 +118,18 @@ test('ví dụ về shadow DOM', async ({ page }) => {
   // tương tác như 1 element bình thường. chỉ cần trỏ tới thằng DOM -> và từ đó dùng locator chain để tương tác
   // phần còn lại để PW lo
 
-    //const openHost = page.locator('open-shadow-el#open-shadow-demo');
-    await page.locator('#os-input').fill('Hello Shadow');
-    await page.locator('#os-btn').click();
-    await expect(page.locator('#os-status')).toHaveText('You typed: Hello Shadow');
-    await page.pause();
+    // //const openHost = page.locator('open-shadow-el#open-shadow-demo');
+    // await page.locator('#os-input').fill('Hello Shadow');
+    // await page.locator('#os-btn').click();
+    // await expect(page.locator('#os-status')).toHaveText('You typed: Hello Shadow');
+    // await page.pause();
 
-    // Shadow DOM (CLOSED): không thể pierce. Cần evaluate trong browser context nếu buộc phải chạm vào
-    const closedHost = page.locator('closed-shadow-el#closed-shadow-demo');
-    // Ví dụ assert chỉ quanh host (không vào bên trong):
-    const shadowDomText = await closedHost.textContent ();
-    console.log (shadowDomText);
-    await expect(closedHost).toBeVisible();
+    // // Shadow DOM (CLOSED): không thể pierce. Cần evaluate trong browser context nếu buộc phải chạm vào
+    // const closedHost = page.locator('closed-shadow-el#closed-shadow-demo');
+    // // Ví dụ assert chỉ quanh host (không vào bên trong):
+    // const shadowDomText = await closedHost.textContent ();
+    // console.log (shadowDomText);
+    // await expect(closedHost).toBeVisible();
     // Nếu cần kiểm tra text bên trong closed shadow, phải dùng page.evaluate với elementHandle (không khuyến nghị cho E2E):
     // const el = await closedHost.elementHandle();
     // const innerText = await page.evaluate(h => h.shadowRoot ? h.shadowRoot.textContent : '(closed)', el);
@@ -136,6 +137,18 @@ test('ví dụ về shadow DOM', async ({ page }) => {
 
 });
 
+export async function isImageOk(page: Page, imgLocator: string): Promise<boolean> {
+  const img = page.locator(imgLocator);
+
+  await expect(img).toBeVisible(); // element hiển thị
+  await expect(img).toHaveJSProperty('complete', true); // ảnh đã load xong
+
+  return await img.evaluate((el: HTMLImageElement) => {
+    console.log(el.naturalWidth);
+    console.log(el.naturalHeight);
+    return el.naturalWidth > 0 && el.naturalHeight > 0;
+  });
+}
 
 test('ví dụ về iframe', async ({ page }) => {
 
@@ -143,45 +156,112 @@ test('ví dụ về iframe', async ({ page }) => {
 
   await page.getByRole('link', { name: 'Bài 5: Shadow DOM & iFrame' }).click();
 
-  // Cách 1: Theo ID (dễ nhất)
-  const frame = page.frameLocator('#demo-iframe');
-  await frame.locator('#if-input').fill('Hello iFrame');
-  await frame.locator('#if-btn').click();
-  await expect(frame.locator('#if-status')).toHaveText('You typed: Hello iFrame');
+//   // Cách 1: Theo ID (dễ nhất)
+//   const frame = page.frameLocator('#demo-iframe');
+//   await frame.locator('#if-input').fill('Hello iFrame');
+//   await frame.locator('#if-btn').click();
+//   await expect(frame.locator('#if-status')).toHaveText('You typed: Hello iFrame');
 
-  await page.pause ();
+//   await page.pause ();
 
-  // CÁCH 1: Theo title attribute
-  const iframeSelector = 'iframe[title="payment-iframe"]';
-  const iframeElement = page.locator(iframeSelector);
-  await iframeElement.waitFor({ state: 'attached', timeout: 10000 });
-  await iframeElement.scrollIntoViewIfNeeded();
+//   // CÁCH 1: Theo title attribute
+//   const iframeSelector = 'iframe[title="payment-iframe"]';
+//   const iframeElement = page.locator(iframeSelector);
+//   await iframeElement.waitFor({ state: 'attached', timeout: 10000 });
+//   await iframeElement.scrollIntoViewIfNeeded();
+
+    page.on('console', (msg) => console.log('[BROWSER]', msg.text()));
+
+    const checkImage = await isImageOk(page, "//img[@alt='Broken 404']");
+    expect(checkImage).toBeFalsy();
 
 });
 
 
 test('ví dụ về evaluate', async ({ page }) => {
 
-  await page.goto('https://demoapp-sable-gamma.vercel.app/');
+  await page.goto('https://demoapp-sable-gamma.vercel.app');
 
   await page.getByRole('link', { name: 'Bài 5: Shadow DOM & iFrame' }).click();
 
-  await page.getByRole ('tab', { name : 'evaluate ()'}).click ();
+  await page.getByRole('tab', { name: 'evaluate()' }).click();
+  // Cú pháp cơ bản
+  //   const result = await page.evaluate(() => {
+  //     // Code này chạy trong browser context
+  //     return document.title;
+  //   });
+  //   await page.locator('#demo-input-1').getAttribute('className');
+  //   await page.locator('#demo-input-1').getAttribute('type');
+  //   const domInfo = await page.locator('#demo-input-1').evaluate((el: HTMLInputElement) => {
+  //     return {
+  //       value: el.value,
+  //       placeholder: el.placeholder,
+  //       type: el.type,
+  //       disabled: el.disabled,
+  //       maxLength: el.maxLength,
+  //       className: el.className,
+  //       defaultValue: el.defaultValue,
+  //       selectionStart: el.selectionStart, // Không có native method
+  //       selectionEnd: el.selectionEnd, // Không có native method
+  //     };
+  //   });
+  //   console.log('DOM Info:', domInfo);
+  page.on('console', (msg) => console.log('[BROWSER]', msg.text()));
 
-  const domInfo = await page.locator ('#demo-input-1').evaluate ((el: HTMLInputElement) =>{
+  // const panel = page.getByRole('tabpanel', { name: '🔧 evaluate()' });
+  // const input = panel.locator('#demo-input-1');
+
+  // // 1) Gõ nội dung
+  // await input.fill('Hello Playwright');
+
+  // // 2) Chọn đoạn text “Hello” (từ index 0 đến 5)
+  // await input.evaluate((el: HTMLInputElement) => {
+  //   el.setSelectionRange(0, 5, 'forward');
+  // });
+
+  // await page.pause();
+
+  // // 3) Đọc selection range (cần evaluate)
+  // const selection = await input.evaluate((el: HTMLInputElement) => ({
+  //   selectionStart: el.selectionStart,
+  //   selectionEnd: el.selectionEnd,
+  //   selectionDirection: el.selectionDirection,
+  // }));
+  // console.log(selection); // { selectionStart: 0, selectionEnd: 5, selectionDirection: 'forward' }
+
+  // // 4) Thay thế đoạn đã chọn bằng chuỗi khác (mô phỏng user gõ)
+  // await input.type('Hi');
+  // // Lúc này value: "Hi Playwright"
+
+  // // 5) Chọn từ vị trí 3 đến hết và xoá
+  // await input.evaluate((el: HTMLInputElement) => {
+  //   el.setSelectionRange(3, el.value.length, 'backward');
+  // });
+  // await page.keyboard.press('Delete');
+  // Kỳ vọng: còn lại "Hi "
+
+  const element = page.locator('#style-demo-element');
+
+  // Đọc một style property
+  const backgroundColor = await element.evaluate((el: HTMLElement) => {
+    return window.getComputedStyle(el).backgroundColor;
+  });
+  console.log('Background color:', backgroundColor); // "rgb(230, 247, 255)"
+
+  // Đọc nhiều styles cùng lúc
+  const styles = await element.evaluate((el: HTMLElement) => {
+    const computed = window.getComputedStyle(el);
     return {
-        value: el.value,
-        placeholder: el.placeholder,
-        type: el.type,
-        disabled: el.disabled,
-        maxLength: el.maxLength,
-        className:el.className,
-        defaultValue: el.defaultValue,
-        selectionStart: el.selectionStart,
-        selectionEnd: el.selectionEnd,
-    }
-  })
-  console.log ('DOM Info:', domInfo)
+      backgroundColor: computed.backgroundColor,
+      color: computed.color,
+      fontSize: computed.fontSize,
+      fontWeight: computed.fontWeight,
+      padding: computed.padding,
+      border: computed.border,
+      borderRadius: computed.borderRadius,
+    };
+  });
+  console.log('All styles:', styles);
 
 });
 

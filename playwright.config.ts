@@ -1,5 +1,17 @@
 import { defineConfig, devices } from '@playwright/test';
 
+import dotenvflow from 'dotenv-flow'
+
+if (!process.env.NODE_ENV){
+  process.env.NODE_ENV = 'development'
+}
+
+dotenvflow.config({
+
+  default_node_env: 'development',
+
+});
+
 /**
  * Read environment variables from file.
  * https://github.com/motdotla/dotenv
