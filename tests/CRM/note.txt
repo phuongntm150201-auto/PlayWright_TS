@@ -104,3 +104,136 @@ giống beforeEach -> nó tự động taoj page mới cho mỗi bài test (sạ
 không cần let hay biến global. Page được truyền thẳng vào hàm test {page}
 tự động dọn dẹp depk * (khi chạy xong fixture tự đóng page), tự giải phóng RAM
 tái sử dụng .viết 1 lần sử dụng cho 1000 test
+
+
+ngày 20/12/2025
+playwright sẽ thực hiện 2 bước
+
+b1: khoanh vùng (scoping) => dựng hàng rào nơi folder test cta sẽ thực hiện thông qua testDir
+b2: lập ds ứng viên () -> quét hết để lấy file testMatch
+so với vd checkout.txt -> đã bị loại bỏ vì k hợp lệ
+=> kqua là PW tạo được 1 ds mới bao gồm nhưngx file hợp lệ
+
+khi đó cta gõ
+npx playwright test checkout => so với tests/checkout.spec.ts -> khớp (có chứa checkout)
+//tests/logintest.spec.ts  -> không khớp -> không chạy
+
+cú pháp glob (kp regex)
+** -> recursive wildcrad -> bất kì thư mục nào bao nhiêu cũng được
+* -> bất kì tên gì
+.spec.ts -> extension đuôi file cố định
+
+projects:
+Mục đích 1: tối ưu hoá tài nguyên
+..vấn đề 100 TCs API và 100 TCs UI
+Mục đích 2: ma trận kiểm thử (test matrix) : 
+Mục đích 3: điều phối chạy *orchestration
+có thể cấu hình setup trạng thái đăng nhập -> chạy test -> tear down
+thiết lập sự phụ thuộc vào các file test
+
+Đặc tính project -> kế thừa ghi đè
+Ưu tiên 1: cấu hình trong từng file test
+Ưu tiên 2: cấu hình trong từng project
+Ưu tiên 3: cấu hình trong global
+
+cái riêng PROJECT CONFIG SẼ GHI ĐÈ CÁI CHUNG TOP LEVEL CONFIG ->
+global config
+
+thêm đuôi 
+
+1. Job A. spec.ts chạy trên project API (api.spec1.ts)
+
+2. Job B chạy trên desktop (cart.spec1.ts)
+
+3. Job C chạy trên desktop (login.spec1.ts)
+
+4. Job D chạy trên mobile (cart.spec1.ts)
+
+5. Job E. chạy trên mobile (login.spec1.ts)
+
+
+
+
+
+
+
+projects: [
+
+    //proejct chuyên chạy API
+
+    {
+
+      name: 'api-engine',
+
+      testMatch: '**/api/*.spec.ts',
+
+      use: {
+
+        browserName: undefined,
+
+        //ko ghi đè gì cả -> kế thừa toàn bộ của global use
+
+      },
+
+    },
+
+    //project desktop chay UI
+
+    {
+
+      name: 'desktop-chrome',
+
+      testMatch: '**/ui/*.spec.ts',
+
+      use: {
+
+        ...devices['Desktop Chrome'],
+
+        headless: true,
+
+      },
+
+    },
+
+    //project chuyeen chay ui iphone
+
+    {
+
+      name: 'mobile-ios',
+
+      testMatch: '**/ui/*.spec.ts',
+
+      use: {
+
+        ...devices['iPhone 12 Pro Max'],
+
+        headless: true,
+
+      },
+
+    },
+
+  ],
+
+
+
+
+import { FullConfig } from '@playwright/test';
+
+async function globalSetup(config: FullConfig) {
+
+  console.log(`[GLOBAL SETUP] bawts đầu khởi động hệ thống`);
+
+  await new Promise((r) => setTimeout(r, 1000));
+
+  process.env.DB_CONNECTION_URL = 'postgres://admin:123';
+
+  process.env.API_ENDPOINT = '8080';
+
+}
+
+export default globalSetup;
+
+
+
+

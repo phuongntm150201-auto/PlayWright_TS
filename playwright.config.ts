@@ -24,7 +24,10 @@ dotenvflow.config({
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
+  //cấu hình thư mục chạy test
+  // mặc định playwright sẽ quét hết nhưng file có tên * spect.ts ở tất cả cấp bậc trog khu vực testDir
   testDir: './tests',
+  //testMatch:'**/*.spec.ts',
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
@@ -52,11 +55,11 @@ export default defineConfig({
   // },
 
   /* Configure projects for major browsers */
-  projects: [
-    {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
-    },
+  // projects: [
+  //   {
+  //     name: 'chromium',
+  //     use: { ...devices['Desktop Chrome'] },
+  //   },
 
     // {
     //   name: 'firefox',
@@ -87,7 +90,7 @@ export default defineConfig({
     //   name: 'Google Chrome',
     //   use: { ...devices['Desktop Chrome'], channel: 'chrome' },
     // },
-  ],
+  //],
 
   /* Run your local dev server before starting the tests */
   // webServer: {
@@ -95,4 +98,63 @@ export default defineConfig({
   //   url: 'http://localhost:3000',
   //   reuseExistingServer: !process.env.CI,
   // },
+
+  projects: [
+
+    //proejct chuyên chạy API
+
+    {
+
+      name: 'api-engine',
+
+      testMatch: '**/api/*.spec.ts',
+
+      use: {
+
+        browserName: undefined,
+
+        //ko ghi đè gì cả -> kế thừa toàn bộ của global use
+
+      },
+
+    },
+
+    //project desktop chay UI
+
+    {
+
+      name: 'desktop-chrome',
+
+      testMatch: '**/ui/*.spec.ts',
+
+      use: {
+
+        ...devices['Desktop Chrome'],
+
+        headless: true,
+
+      },
+
+    },
+
+    //project chuyeen chay ui iphone
+
+    {
+
+      name: 'mobile-ios',
+
+      testMatch: '**/ui/*.spec.ts',
+
+      use: {
+
+        ...devices['iPhone 12 Pro Max'],
+
+        headless: true,
+
+      },
+
+    },
+
+  ],
+
 });
