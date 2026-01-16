@@ -235,5 +235,115 @@ async function globalSetup(config: FullConfig) {
 export default globalSetup;
 
 
+//3/1/2026
+API= Application Programming Interface
+Application: là giống các phần mềm facebook, zalo
+programming: là cách ta viết được code
+Interface -> là nơi gặp gỡ , cầu nối để 2 thằng xa lạ nói chuyện với nhau 
+
+FE: (BẠN) ngồi ở bàn ăn... muốn ăn bánh mì pate
+BE:(bếp) là nơi chứa thịt bò, gia vị, đầu bếp
+API (bồi bàn) gắn kết FE VÀ BE
+
+Bồi bàn (API) sẽ làm các việc
++B1: (Request) đưa ra thực đơn cho bồi bàn 
++B2: Process: bồi bàn mang tờ giấy đó cho đầu bêps
++B3: REPONSE: bếp nấu xong, bồi bàn đưa đĩa chứa bánh mì cho bạn 
+
+Hiện nay có nhưngx công nghệ để API trổ tài
+1. Restful API:
+VD: mình đang đứng ở 1 máy bán nước tự động (BE)
+- Trên máy có nút A(COCA), B(PEPSI) => đây chính là API_ENDPOINT
+-> ví dụ muốn coca -> ấn nút A -> máy nhả 1 lon coca
+=> vấn đề vs chuẩn restful API
+= Thừa mức : nhả ra lon 330ml => uống 1 ngum ném đi => phí phạm(tốn băng thông)
+- mất công : coca+bimbim => nhấn 2 lần, 1 lần là A , 1 lần là C (bimbim) => thao tác 2 lần gửi Request
+
+2. Do phở bò (fb) phát triển -> (GraphQL)
+Bối cảnh: mình vào 1 quán bar xịn xò, gặp a bartender (BE)
+- Cách hoạt động 
+- Bartender k đưa menu cố định -> đưa cho 1 tờ giaasy trắng và 1 cái bút
+-> mình viết y/c cho 1 ly cocktail : 30% rượu rum, 50% nước cam, 2 lát chanh, k đường
+
+-> bartender pha chế 1 ly y hệt công thức đó và đưa 1 ly duy nhất
+Ưu điểm:
+Chính xác: -> y/c rì được nấy, k thừa đường thiếu chanh
+- tiện lợi nếu thê 1 đĩa lạc => thêm vào tờ giấy => bartender sẽ mang ra trong 1 request
+
+3. Websocket
+- bối cảnh: cần bơm đầy 1 bể bơi
+- cách hoạt động: k dùng thau chậu -> nối 1 ống dẫn nước (socket connection) thẳng từ nhà máy nước vào cái bể -> nước chảy
+liên tục (data stream) -> ..nhà máy bơm nước thì cái bể nhận được ngay nước tức thì
+Ứng dụnng: coin, chứng, giá vàng
+độ trễ thấp
+
+playwright cơ chế của nó là wénocket -> giao tiếp trực tiếp với browser
+
+Để 2 thằng giao tiếp với nhau thì cần cây cầu API phải có ngôn ngữ chung
+FE (người VN) (CODE BẰNG TYOE SCRIPT)
+BE ( mỹ tho) (code bằng JAVA/PYTHON)
+thì dùng API nói chuyện vs 2 ông này cần 1 ngôn ngữ chung  - JSON (javascript object notation)
+
+cấu trúc json rất đơn giản y sì object của typécript
+100% key phải có ""
+{
+    "ten":"teo",
+    "tuoi":25,
+    "sơ_thich": ["Game", "code"]
+}
+{
+    'ten':"teo"
+}-> sai
+
+
+SPA 
+server side rendering
+client side rendering
+
+Thông tin 1 request mà FE gọi xuống BE
+
+1. Method (hàh động muốn làm) => dán tem lên bìa thư để định danh hành động
+- GET : LẤY thông tin (k sửa đổi gì). VD: xem ds spham
+- POST: tạo mới: VD: đăng ký tk
+- PUT/PATCH: sửa đổi:VD: đổi mk, cập nhật profile
+- DELETE: xoá: xoá giỏ hàng
+
+CURD: create updta read delete
+2. ENDPOINT(địa chỉ) => thư thì phải có địa chỉ
+BaseUrl: https://jsonplaceholder.typicode.com/
+endpoint: /todos/1
+
+3. Header( thông tin phụ) -> những thứ viết bên ngaoif phong bì
+
+Content-Type: application/json (báo trước: trong thư viết bằng jsson)
+Authrization: xác thực phân quyền (cho cơ chế JWT)
+
+4.Body (nd thư)
+Chỉ dùng cho POST/PUT/PATCH...
+
+sử dung curl => giống như 1 gói tin nén chứa đầy đủ URL, endpoint, method, header, body.. trong 1 đoạn vb duy nhất
+
+
+thông tin respone phản hồi
+
+
+.
+.
+.
+2 respone body
+dữ liệu server trả về (thường là json) 
+
+//ngày 15/1/2026
+
+Thif
+GET -> Lấy dữ liệu
+POST -> tạo mới dữ liệu
+PUT/PATCH
+DELETE -> xoá dữ liệu
+
+
+
+
+
 
 

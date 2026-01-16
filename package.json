@@ -15,6 +15,7 @@
     "@types/node": "^24.7.2"
   },
   "dependencies": {
+    "@faker-js/faker": "^10.1.0",
     "cross-env": "^10.1.0",
     "date-fns": "^4.1.0",
     "dotenv-flow": "^4.1.0"

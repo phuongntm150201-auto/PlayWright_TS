@@ -11,4 +11,7 @@ export class CRMCustomerPage extends BasePage {
     async expectOnPage(): Promise<void> {
         await expect(this.element ('newCustomerLink')).toBeVisible ();
     }
+    async clickAddNewCustomer () {
+        await this.clickWithLog ( this.element ('newCustomerLink'));
+    }
 }

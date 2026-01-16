@@ -6,7 +6,7 @@ export interface CustomerInfo {
     vat?:string;
     phone?:string;
     website?: string;
-    adress? : string;
+    address? : string;
     city?: string;
     state? : string;
     zip ?:string;
@@ -26,7 +26,7 @@ export class CRMNewCustomerPage extends BasePage {
         state:'#state',
         zip :'#zip',
 
-        //
+        //asterik ( dấu *)
         saveButton : (page:Page) =>
             page.locator ('#profile-save-section').filter ({hasText:'Save'}).nth (1),
 
@@ -59,8 +59,8 @@ export class CRMNewCustomerPage extends BasePage {
         }
     }
     async fillAdress (info: CustomerInfo) {
-        if (info.adress) {
-            await this.fillWithLog (this.element ('vat'), info.adress)
+        if (info.address) {
+            await this.fillWithLog (this.element ('vat'), info.address)
         }
         if (info.city) {
             await this.fillWithLog (this.element ('phone'),info.city)

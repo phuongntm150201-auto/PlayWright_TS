@@ -8,7 +8,7 @@ export class SidebarMenu {
     constructor (page:Page) {
         this.page = page;
         this.sidebar = page.locator ('#menu.sidebar');
-        this.menuItems = this.sidebar.locator ('l.nav.metis-menu > li')
+        this.menuItems = this.sidebar.locator ('nav.metis-menu > li')
     }
     private getMenuItemByText (text: string) :Locator {
         return this.menuItems.filter ({ has:this.page.locator ('span.menu-text', {hasText :text})})

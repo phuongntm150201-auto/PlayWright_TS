@@ -1,4 +1,10 @@
-import { test, expect } from '@playwright/test';
+import { test, expect , Page } from '@playwright/test';
+import { CRMLoginPage } from './POM/CRMLoginPage';
+import { CRMDashboardPage } from './POM/CRMDashboardPage';
+import { CRMCustomerPage } from './POM/CRMCustomerPage';
+import { CRMNewCustomerPage } from './POM/CRMNewCustomerPage';
+import { createMinimalCustomerInfo } from './Utils/test-data';
+
 
 test.beforeEach(async ({ page }) => {
 
@@ -20,13 +26,15 @@ function createCRMPages(page: Page) {
 
     customersPage: new CRMCustomerPage(page),
 
+    newCustomerPage: new CRMNewCustomerPage (page),
+
   };
 
 }
 
-test('TC_01 - Lấy toàn bộ dữ liệu 1 cột sử dụng column Map', async ({ page }) => {
+test ('TC_01 - Tạo Customer (Chỉ nhập trường bắt buộc)', async ({ page }) => {
 
-  const { dashboardPage, customersPage } = createCRMPages(page);
+  const { dashboardPage, customersPage, newCustomerPage } = createCRMPages(page);
 
   await test.step('Verify dashboard da load sau khi login', async () => {
 
@@ -42,13 +50,19 @@ test('TC_01 - Lấy toàn bộ dữ liệu 1 cột sử dụng column Map', asyn
 
   });
 
-  await test.step('Get all company names using column map', async () => {
+  await test.step('Navigate tu customerPage -> new Customer Page', async () => {
 
-    const companies = await customersPage.getColumnValues('company');
+    await customersPage.clickAddNewCustomer ();
 
-    console.log(companies);
+    await newCustomerPage.expectOnPage ();
 
   });
+
+  const customerInfo = createMinimalCustomerInfo ();
+  await test.step ('Fill required company field', async ()=>{
+    await newCustomerPage.fillCompany (customerInfo.company);
+    await newCustomerPage.clickSaveButton ();
+  })
 
 });
 
